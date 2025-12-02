@@ -92,7 +92,12 @@ for (let i = -30; i < DAYS_HISTORY; i++) {
                     durationMinutes: getRandomInt(5, 30), // Random duration 5-30 mins
                     shipmentType: getRandomItem(SHIPMENT_TYPES),
                     status, // Completed, Pending, Unclaimed
-                    assignType // Auto, Manual, Reassigned
+                    assignType, // Auto, Manual, Reassigned
+                    // Simulated time metrics (in minutes)
+                    reqToPresc: getRandomInt(20, 60),
+                    assignToPresc: getRandomInt(15, 45),
+                    startToPresc: getRandomInt(5, 30),
+                    nonRespondedTime: assignType === 'Reassigned' ? getRandomInt(10, 120) : 0
                 });
             }
         }
@@ -183,6 +188,30 @@ export const getDashboardData = (startDateStr, endDateStr) => {
         });
         const shipmentMetrics = Object.values(shipmentMetricsMap);
 
+        // Calculate Average Times for KPI Cards
+        const completedOrders = doctorOrders.filter(o => o.status === 'Completed');
+        const reassignedOrders = doctorOrders.filter(o => o.assignType === 'Reassigned');
+
+        const avgReqToPresc = completedOrders.length > 0
+            ? (completedOrders.reduce((sum, o) => sum + o.reqToPresc, 0) / completedOrders.length).toFixed(0)
+            : 0;
+        const avgAssignToPresc = completedOrders.length > 0
+            ? (completedOrders.reduce((sum, o) => sum + o.assignToPresc, 0) / completedOrders.length).toFixed(0)
+            : 0;
+        const avgStartToPresc = completedOrders.length > 0
+            ? (completedOrders.reduce((sum, o) => sum + o.startToPresc, 0) / completedOrders.length).toFixed(0)
+            : 0;
+        const avgNonResponded = reassignedOrders.length > 0
+            ? (reassignedOrders.reduce((sum, o) => sum + o.nonRespondedTime, 0) / reassignedOrders.length).toFixed(0)
+            : 0;
+
+        const avgTimes = {
+            reqToPresc: avgReqToPresc,
+            assignToPresc: avgAssignToPresc,
+            startToPresc: avgStartToPresc,
+            nonResponded: avgNonResponded
+        };
+
         // Time Data
         const isToday = startDate.toDateString() === new Date().toDateString();
         let timeData = {
@@ -208,6 +237,7 @@ export const getDashboardData = (startDateStr, endDateStr) => {
             status: doctor.currentStatus, // Always show current real-time status
             metrics,
             timeData,
+            avgTimes,
             shipmentMetrics
         };
     });

@@ -32,6 +32,39 @@ const Dashboard = () => {
         }, { totalAssigned: 0, completed: 0, pending: 0, unclaimed: 0, verified: 0, rejected: 0 });
     }, [doctors]);
 
+    // Calculate Global Average Times
+    const globalAvgTimes = useMemo(() => {
+        let totalReqToPresc = 0;
+        let totalAssignToPresc = 0;
+        let totalStartToPresc = 0;
+        let totalNonResponded = 0;
+        let totalCompleted = 0;
+        let totalReassigned = 0;
+
+        doctors.forEach(doc => {
+            const completed = doc.metrics.completed;
+            const reassigned = doc.metrics.reassigned;
+
+            if (completed > 0) {
+                totalReqToPresc += parseFloat(doc.avgTimes.reqToPresc) * completed;
+                totalAssignToPresc += parseFloat(doc.avgTimes.assignToPresc) * completed;
+                totalStartToPresc += parseFloat(doc.avgTimes.startToPresc) * completed;
+                totalCompleted += completed;
+            }
+            if (reassigned > 0) {
+                totalNonResponded += parseFloat(doc.avgTimes.nonResponded) * reassigned;
+                totalReassigned += reassigned;
+            }
+        });
+
+        return {
+            reqToPresc: totalCompleted > 0 ? (totalReqToPresc / totalCompleted).toFixed(0) : 0,
+            assignToPresc: totalCompleted > 0 ? (totalAssignToPresc / totalCompleted).toFixed(0) : 0,
+            startToPresc: totalCompleted > 0 ? (totalStartToPresc / totalCompleted).toFixed(0) : 0,
+            nonResponded: totalReassigned > 0 ? (totalNonResponded / totalReassigned).toFixed(0) : 0
+        };
+    }, [doctors]);
+
     const activeDoctorsCount = doctors.filter(d => d.status === 'Available').length;
     const avgOrdersPerActive = activeDoctorsCount > 0 ? (kpis.completed / activeDoctorsCount).toFixed(1) : "0.0";
     const unclaimedRate = kpis.totalAssigned > 0 ? ((kpis.unclaimed / kpis.totalAssigned) * 100).toFixed(1) : "0.0";
@@ -184,6 +217,40 @@ const Dashboard = () => {
                                         <div className="card-body text-center d-flex flex-column justify-content-center">
                                             <h6 className="text-muted text-uppercase small fw-bold mb-2">Pending</h6>
                                             <h2 className="display-6 fw-bold text-warning mb-0">{kpis.pending}</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </Carousel.Item>
+                        <Carousel.Item>
+                            <div className="row g-3 p-1">
+                                <div className="col-md-4">
+                                    <div className="card border-0 shadow-sm" style={{ minHeight: '10rem' }}>
+                                        <div className="card-body text-center d-flex flex-column justify-content-center">
+                                            <h6 className="text-muted text-uppercase small fw-bold mb-2">Average Time / Order</h6>
+                                            <div className="d-flex flex-column gap-2 small">
+                                                <div className="d-flex justify-content-between border-bottom pb-1">
+                                                    <span>Request - Prescription:</span>
+                                                    <span className="fw-bold text-primary">{globalAvgTimes.reqToPresc} min</span>
+                                                </div>
+                                                <div className="d-flex justify-content-between border-bottom pb-1">
+                                                    <span>Assignment - Prescription:</span>
+                                                    <span className="fw-bold text-info">{globalAvgTimes.assignToPresc} min</span>
+                                                </div>
+                                                <div className="d-flex justify-content-between">
+                                                    <span>Start - Prescription:</span>
+                                                    <span className="fw-bold text-success">{globalAvgTimes.startToPresc} min</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-md-4">
+                                    <div className="card border-0 shadow-sm" style={{ minHeight: '10rem' }}>
+                                        <div className="card-body text-center d-flex flex-column justify-content-center">
+                                            <h6 className="text-muted text-uppercase small fw-bold mb-2">Non Responded Avg Time</h6>
+                                            <h2 className="display-6 fw-bold text-danger mb-0">{globalAvgTimes.nonResponded} min</h2>
+                                            <div className="small text-muted mt-2">Avg time for Request - Prescription</div>
                                         </div>
                                     </div>
                                 </div>

@@ -1,0 +1,11 @@
+Doctor Name,Current Status,Total Assigned,Auto Assigned,Manual Assigned,Reassigned,Completed,Pending,Unclaimed,Available Hrs,Idle Time,Avg Time / Order
+Dr. Vejas Sai,Available,21,15,5,1,20,0,1,7.0,1h 1m,2.9
+Dr. Priya Sharma,Available,47,32,11,4,45,1,1,10.0,0h 0m,4.5
+Dr. Amit Patel,Available,21,10,9,2,17,3,1,6.0,0h 0m,2.8
+Dr. Sneha Gupta,Available,27,20,6,1,22,4,1,10.0,2h 52m,2.2
+Dr. Vikram Singh,Unavailable,33,25,6,2,30,1,2,6.0,0h 0m,5.0
+Dr. Anjali Verma,Available,43,32,8,3,42,0,1,6.0,0h 0m,7.0
+Dr. Rahul Reddy,Available,0,0,0,0,0,0,0,0.0,0h 0m,0.0
+Dr. Kavita Iyer,Unavailable,45,34,8,3,40,3,2,7.0,0h 0m,5.7
+Dr. Sanjay Mehta,Available,32,24,7,1,32,0,0,7.0,0h 0m,4.6
+Dr. Neha Joshi,Unavailable,31,24,4,3,28,2,1,7.0,0h 0m,4.0
