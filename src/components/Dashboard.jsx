@@ -73,7 +73,7 @@ const Dashboard = () => {
         const headers = [
             "Doctor Name", "Current Status", "Total Assigned", "Auto Assigned",
             "Manual Assigned", "Reassigned", "Completed", "Pending",
-            "Unclaimed", "Available Hrs", "Idle Time", "Avg Time / Order"
+            "Unclaimed", "Available Hrs", "Idle Time", "Avg Time / Order (in mins)"
         ];
 
         const csvContent = [
@@ -290,7 +290,7 @@ const Dashboard = () => {
                                         <th>Unclaimed</th>
                                         <th>Available Hrs</th>
                                         <th>Idle Time</th>
-                                        <th>Avg Time / Order</th>
+                                        <th>Avg Time / Order (in mins)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
