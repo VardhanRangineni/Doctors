@@ -67,7 +67,7 @@ const Dashboard = () => {
                                 <div className="col-md-4">
                                     <div className="card border-0 shadow-sm" style={{ minHeight: '10rem' }}>
                                         <div className="card-body text-center d-flex flex-column justify-content-center">
-                                            <h6 className="text-muted text-uppercase small fw-bold mb-2">Avg Orders / Active Doctor</h6>
+                                            <h6 className="text-muted text-uppercase small fw-bold mb-2">Avg Order / Doctor</h6>
                                             <h2 className="display-6 fw-bold text-info mb-0">{avgOrdersPerActive}</h2>
                                             <div className="small text-muted mt-2">Based on {activeDoctorsCount} active doctors</div>
                                         </div>
@@ -117,33 +117,7 @@ const Dashboard = () => {
                     <div className="bg-white rounded shadow-sm p-4">
                         <h5 className="mb-4">Doctor E-Prescriptions</h5>
 
-                        {/* KPI Tabs */}
-                        <div className="d-flex border-bottom mb-4 overflow-auto">
-                            <div className="kpi-tab active-tab">
-                                <span className="text-primary fw-bold">To Be Claimed</span>
-                                <span className="badge bg-light text-dark ms-2 border">{kpis.pending}</span>
-                            </div>
-                            <div className="kpi-tab">
-                                <span className="text-muted">Claimed</span>
-                                <span className="badge bg-light text-dark ms-2 border">{kpis.totalAssigned}</span>
-                            </div>
-                            <div className="kpi-tab">
-                                <span className="text-muted">Verified</span>
-                                <span className="badge bg-light text-dark ms-2 border">{kpis.verified}</span>
-                            </div>
-                            <div className="kpi-tab">
-                                <span className="text-muted">Rejected</span>
-                                <span className="badge bg-light text-dark ms-2 border">{kpis.rejected}</span>
-                            </div>
-                            <div className="kpi-tab">
-                                <span className="text-muted">Unclaimed</span>
-                                <span className="badge bg-light text-dark ms-2 border">{kpis.unclaimed}</span>
-                            </div>
-                            <div className="kpi-tab">
-                                <span className="text-muted">Non-Responded</span>
-                                <span className="badge bg-light text-dark ms-2 border">0</span>
-                            </div>
-                        </div>
+                        {/* KPI Tabs Removed */}
 
                         {/* Filters */}
                         <div className="d-flex justify-content-end mb-3 gap-2">
@@ -199,7 +173,7 @@ const Dashboard = () => {
                                         <th>Unclaimed</th>
                                         <th>Idle Time</th>
                                         <th>Available Hrs</th>
-                                        <th>Avg Orders/Hr</th>
+                                        <th>Avg Time / Order</th>
                                     </tr>
                                 </thead>
                                 <tbody>
