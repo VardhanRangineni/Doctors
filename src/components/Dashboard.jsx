@@ -36,12 +36,89 @@ const Dashboard = () => {
     const avgOrdersPerActive = activeDoctorsCount > 0 ? (kpis.completed / activeDoctorsCount).toFixed(1) : "0.0";
     const unclaimedRate = kpis.totalAssigned > 0 ? ((kpis.unclaimed / kpis.totalAssigned) * 100).toFixed(1) : "0.0";
 
+    const downloadExcel = () => {
+        const headers = [
+            "Doctor Name", "Current Status", "Total Assigned", "Auto Assigned",
+            "Manual Assigned", "Reassigned", "Completed", "Pending",
+            "Unclaimed", "Available Hrs", "Idle Time", "Avg Time / Order"
+        ];
+
+        const csvContent = [
+            headers.join(","),
+            ...doctors.map(doc => [
+                doc.name,
+                doc.status,
+                doc.metrics.totalAssigned,
+                doc.metrics.autoAssigned,
+                doc.metrics.manualAssigned,
+                doc.metrics.reassigned,
+                doc.metrics.completed,
+                doc.metrics.pending,
+                doc.metrics.unclaimed,
+                doc.timeData.availableHours,
+                doc.timeData.idleTime,
+                doc.timeData.avgOrdersPerHour
+            ].join(","))
+        ].join("\n");
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", "doctor_metrics.csv");
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
         <div className="d-flex flex-column" style={{ minHeight: '100vh' }}>
             <Header />
             <div className="d-flex flex-grow-1">
                 <Sidebar />
                 <div className="flex-grow-1 p-4 bg-light">
+                    {/* Title and Filters */}
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                        <h5 className="mb-0">Doctor E-Prescriptions</h5>
+                        <div className="d-flex gap-2">
+                            <div className="d-flex align-items-center">
+                                <span className="me-2 small fw-bold text-muted">From:</span>
+                                <input
+                                    type="date"
+                                    className="form-control form-control-sm"
+                                    style={{ width: '150px' }}
+                                    value={startDate}
+                                    max={today}
+                                    onChange={e => {
+                                        const newStart = e.target.value;
+                                        setStartDate(newStart);
+                                        if (newStart > endDate) {
+                                            setEndDate(newStart);
+                                        }
+                                    }}
+                                />
+                            </div>
+                            <div className="d-flex align-items-center">
+                                <span className="me-2 small fw-bold text-muted">To:</span>
+                                <input
+                                    type="date"
+                                    className="form-control form-control-sm"
+                                    style={{ width: '150px' }}
+                                    value={endDate}
+                                    max={today}
+                                    min={startDate}
+                                    onChange={e => {
+                                        const newEnd = e.target.value;
+                                        if (newEnd >= startDate) {
+                                            setEndDate(newEnd);
+                                        }
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
                     {/* High-level KPI Cards Carousel */}
                     <Carousel interval={3000} indicators={false} controls={true} variant="dark" className="mb-4 kpi-carousel">
                         <Carousel.Item>
@@ -115,46 +192,19 @@ const Dashboard = () => {
                     </Carousel>
 
                     <div className="bg-white rounded shadow-sm p-4">
-                        <h5 className="mb-4">Doctor E-Prescriptions</h5>
+
 
                         {/* KPI Tabs Removed */}
 
-                        {/* Filters */}
-                        <div className="d-flex justify-content-end mb-3 gap-2">
-                            <div className="d-flex align-items-center">
-                                <span className="me-2 small fw-bold text-muted">From:</span>
-                                <input
-                                    type="date"
-                                    className="form-control form-control-sm"
-                                    style={{ width: '150px' }}
-                                    value={startDate}
-                                    max={today}
-                                    onChange={e => {
-                                        const newStart = e.target.value;
-                                        setStartDate(newStart);
-                                        if (newStart > endDate) {
-                                            setEndDate(newStart);
-                                        }
-                                    }}
-                                />
-                            </div>
-                            <div className="d-flex align-items-center">
-                                <span className="me-2 small fw-bold text-muted">To:</span>
-                                <input
-                                    type="date"
-                                    className="form-control form-control-sm"
-                                    style={{ width: '150px' }}
-                                    value={endDate}
-                                    max={today}
-                                    min={startDate}
-                                    onChange={e => {
-                                        const newEnd = e.target.value;
-                                        if (newEnd >= startDate) {
-                                            setEndDate(newEnd);
-                                        }
-                                    }}
-                                />
-                            </div>
+                        {/* Export Button */}
+                        <div className="d-flex justify-content-end mb-3">
+                            <button className="btn btn-success btn-sm d-flex align-items-center gap-2" onClick={downloadExcel}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-file-earmark-excel" viewBox="0 0 16 16">
+                                    <path d="M5.884 6.68a.5.5 0 1 0-.768.64L7.349 10l-2.233 2.68a.5.5 0 0 0 .768.64L8 10.781l2.116 2.54a.5.5 0 0 0 .768-.641L8.651 10l2.233-2.68a.5.5 0 0 0-.768-.64L8 9.219l-2.116-2.54z" />
+                                    <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
+                                </svg>
+                                Export to Excel
+                            </button>
                         </div>
 
                         {/* Table */}
@@ -171,8 +221,8 @@ const Dashboard = () => {
                                         <th>Completed</th>
                                         <th>Pending</th>
                                         <th>Unclaimed</th>
-                                        <th>Idle Time</th>
                                         <th>Available Hrs</th>
+                                        <th>Idle Time</th>
                                         <th>Avg Time / Order</th>
                                     </tr>
                                 </thead>
@@ -200,8 +250,8 @@ const Dashboard = () => {
                                                 <td className="text-success fw-bold">{doctor.metrics.completed}</td>
                                                 <td className="text-warning fw-bold">{doctor.metrics.pending}</td>
                                                 <td className="text-danger fw-bold">{doctor.metrics.unclaimed}</td>
-                                                <td className="text-muted fw-bold">{doctor.timeData.idleTime}</td>
                                                 <td>{doctor.timeData.availableHours}</td>
+                                                <td className="text-muted fw-bold">{doctor.timeData.idleTime}</td>
                                                 <td>{doctor.timeData.avgOrdersPerHour}</td>
                                             </tr>
                                             {expandedDoctorId === doctor.id && (
