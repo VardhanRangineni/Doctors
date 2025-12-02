@@ -281,16 +281,16 @@ const Dashboard = () => {
                                     <tr>
                                         <th>Doctor Name</th>
                                         <th>Current Status</th>
-                                        <th>Total Assigned</th>
-                                        <th>Auto Assigned</th>
-                                        <th>Manual Assigned</th>
-                                        <th>Reassigned</th>
-                                        <th>Completed</th>
-                                        <th>Pending</th>
-                                        <th>Unclaimed</th>
-                                        <th>Available Hrs</th>
-                                        <th>Idle Time</th>
-                                        <th>Avg Time / Order (in mins)</th>
+                                        <th className="text-center">Total Assigned</th>
+                                        <th className="text-center">Auto Assigned</th>
+                                        <th className="text-center">Manual Assigned</th>
+                                        <th className="text-center">Reassigned</th>
+                                        <th className="text-center">Completed</th>
+                                        <th className="text-center">Pending</th>
+                                        <th className="text-center">Unclaimed</th>
+                                        <th className="text-center">Available Hrs</th>
+                                        <th className="text-center">Idle Time</th>
+                                        <th className="text-center">Avg Time / Order (in mins)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -310,16 +310,16 @@ const Dashboard = () => {
                                                         {doctor.status}
                                                     </span>
                                                 </td>
-                                                <td>{doctor.metrics.totalAssigned}</td>
-                                                <td>{doctor.metrics.autoAssigned}</td>
-                                                <td>{doctor.metrics.manualAssigned}</td>
-                                                <td>{doctor.metrics.reassigned}</td>
-                                                <td className="text-success fw-bold">{doctor.metrics.completed}</td>
-                                                <td className="text-warning fw-bold">{doctor.metrics.pending}</td>
-                                                <td className="text-danger fw-bold">{doctor.metrics.unclaimed}</td>
-                                                <td>{doctor.timeData.availableHours}</td>
-                                                <td className="text-muted fw-bold">{doctor.timeData.idleTime}</td>
-                                                <td>{doctor.timeData.avgOrdersPerHour}</td>
+                                                <td className="text-center">{doctor.metrics.totalAssigned}</td>
+                                                <td className="text-center">{doctor.metrics.autoAssigned}</td>
+                                                <td className="text-center">{doctor.metrics.manualAssigned}</td>
+                                                <td className="text-center">{doctor.metrics.reassigned}</td>
+                                                <td className="text-center text-success fw-bold">{doctor.metrics.completed}</td>
+                                                <td className="text-center text-warning fw-bold">{doctor.metrics.pending}</td>
+                                                <td className="text-center text-danger fw-bold">{doctor.metrics.unclaimed}</td>
+                                                <td className="text-center">{doctor.timeData.availableHours}</td>
+                                                <td className="text-center text-muted fw-bold">{doctor.timeData.idleTime}</td>
+                                                <td className="text-center">{doctor.timeData.avgOrdersPerHour}</td>
                                             </tr>
                                             {expandedDoctorId === doctor.id && (
                                                 <tr>
