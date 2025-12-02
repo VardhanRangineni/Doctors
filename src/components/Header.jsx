@@ -20,12 +20,12 @@ const Header = () => {
                 <FaWifi className="text-success" />
                 <div className="d-flex align-items-center text-end">
                     <div className="me-2">
-                        <div className="fw-bold small">Bollaboina Vaman</div>
-                        <div className="text-muted small" style={{ fontSize: '0.7rem' }}>Emp ID: 013247</div>
-                        <div className="text-muted small" style={{ fontSize: '0.7rem' }}>vamanktu@gmail.com</div>
+                        <div className="fw-bold small">Vardhan Rangineni</div>
+                        <div className="text-muted small" style={{ fontSize: '0.7rem' }}>Emp ID: OTG06992A</div>
+                        <div className="text-muted small" style={{ fontSize: '0.7rem' }}>ranginenivardhan@gmail.com</div>
                     </div>
                     <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style={{ width: '35px', height: '35px' }}>
-                        BV
+                        VR
                     </div>
                 </div>
             </div>

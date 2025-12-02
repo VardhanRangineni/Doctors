@@ -24,3 +24,23 @@
 .table tbody td {
     font-size: 0.9rem;
 }
+
+/* KPI Carousel Customization */
+.kpi-carousel {
+    padding: 0 4rem;
+    /* Create space for arrows */
+}
+
+.kpi-carousel .carousel-control-prev,
+.kpi-carousel .carousel-control-next {
+    width: 4rem;
+    /* Match padding width */
+}
+
+.kpi-carousel .carousel-control-prev {
+    left: 0;
+}
+
+.kpi-carousel .carousel-control-next {
+    right: 0;
+}

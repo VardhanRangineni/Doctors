@@ -44,11 +44,11 @@ const Dashboard = () => {
 
                 <div className="p-4">
                     {/* High-level KPI Cards Carousel */}
-                    <Carousel interval={3000} indicators={false} controls={true} variant="dark" className="mb-4">
+                    <Carousel interval={3000} indicators={false} controls={true} variant="dark" className="mb-4 kpi-carousel">
                         <Carousel.Item>
                             <div className="row g-3 p-1">
                                 <div className="col-md-4">
-                                    <div className="card border-0 shadow-sm" style={{ minHeight: '14rem' }}>
+                                    <div className="card border-0 shadow-sm" style={{ minHeight: '10rem' }}>
                                         <div className="card-body text-center d-flex flex-column justify-content-center">
                                             <h6 className="text-muted text-uppercase small fw-bold mb-2">Total Doctors</h6>
                                             <h2 className="display-6 fw-bold text-primary mb-2">{doctors.length}</h2>
@@ -66,7 +66,7 @@ const Dashboard = () => {
                                     </div>
                                 </div>
                                 <div className="col-md-4">
-                                    <div className="card border-0 shadow-sm" style={{ minHeight: '14rem' }}>
+                                    <div className="card border-0 shadow-sm" style={{ minHeight: '10rem' }}>
                                         <div className="card-body text-center d-flex flex-column justify-content-center">
                                             <h6 className="text-muted text-uppercase small fw-bold mb-2">Avg Orders / Active Doctor</h6>
                                             <h2 className="display-6 fw-bold text-info mb-0">{avgOrdersPerActive}</h2>
@@ -75,7 +75,7 @@ const Dashboard = () => {
                                     </div>
                                 </div>
                                 <div className="col-md-4">
-                                    <div className="card border-0 shadow-sm" style={{ minHeight: '14rem' }}>
+                                    <div className="card border-0 shadow-sm" style={{ minHeight: '10rem' }}>
                                         <div className="card-body text-center d-flex flex-column justify-content-center">
                                             <h6 className="text-muted text-uppercase small fw-bold mb-2">Unclaimed %</h6>
                                             <h2 className="display-6 fw-bold text-danger mb-0">{unclaimedRate}%</h2>
@@ -88,7 +88,7 @@ const Dashboard = () => {
                         <Carousel.Item>
                             <div className="row g-3 p-1">
                                 <div className="col-md-4">
-                                    <div className="card border-0 shadow-sm" style={{ minHeight: '14rem' }}>
+                                    <div className="card border-0 shadow-sm" style={{ minHeight: '10rem' }}>
                                         <div className="card-body text-center d-flex flex-column justify-content-center">
                                             <h6 className="text-muted text-uppercase small fw-bold mb-2">Total Assigned</h6>
                                             <h2 className="display-6 fw-bold text-dark mb-0">{kpis.totalAssigned}</h2>
@@ -96,7 +96,7 @@ const Dashboard = () => {
                                     </div>
                                 </div>
                                 <div className="col-md-4">
-                                    <div className="card border-0 shadow-sm" style={{ minHeight: '14rem' }}>
+                                    <div className="card border-0 shadow-sm" style={{ minHeight: '10rem' }}>
                                         <div className="card-body text-center d-flex flex-column justify-content-center">
                                             <h6 className="text-muted text-uppercase small fw-bold mb-2">Completed</h6>
                                             <h2 className="display-6 fw-bold text-success mb-0">{kpis.completed}</h2>
@@ -104,7 +104,7 @@ const Dashboard = () => {
                                     </div>
                                 </div>
                                 <div className="col-md-4">
-                                    <div className="card border-0 shadow-sm" style={{ minHeight: '14rem' }}>
+                                    <div className="card border-0 shadow-sm" style={{ minHeight: '10rem' }}>
                                         <div className="card-body text-center d-flex flex-column justify-content-center">
                                             <h6 className="text-muted text-uppercase small fw-bold mb-2">Pending</h6>
                                             <h2 className="display-6 fw-bold text-warning mb-0">{kpis.pending}</h2>
