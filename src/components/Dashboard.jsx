@@ -37,12 +37,11 @@ const Dashboard = () => {
     const unclaimedRate = kpis.totalAssigned > 0 ? ((kpis.unclaimed / kpis.totalAssigned) * 100).toFixed(1) : "0.0";
 
     return (
-        <div className="d-flex bg-light" style={{ minHeight: '100vh' }}>
-            <Sidebar />
-            <div className="flex-grow-1 d-flex flex-column">
-                <Header />
-
-                <div className="p-4">
+        <div className="d-flex flex-column" style={{ minHeight: '100vh' }}>
+            <Header />
+            <div className="d-flex flex-grow-1">
+                <Sidebar />
+                <div className="flex-grow-1 p-4 bg-light">
                     {/* High-level KPI Cards Carousel */}
                     <Carousel interval={3000} indicators={false} controls={true} variant="dark" className="mb-4 kpi-carousel">
                         <Carousel.Item>
@@ -303,7 +302,7 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-        </div >
+        </div>
     );
 };
 

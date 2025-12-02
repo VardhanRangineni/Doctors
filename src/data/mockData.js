@@ -8,9 +8,9 @@ export const SHIPMENT_TYPES = [
 ];
 
 const DOCTOR_NAMES = [
-    "Dr. Vejas Sai", "Dr. John Doe", "Dr. Emily Chen", "Dr. Michael Brown",
-    "Dr. Lisa Wang", "Dr. James Wilson", "Dr. Jessica Garcia", "Dr. Robert Taylor",
-    "Dr. William Anderson", "Dr. David Thomas"
+    "Dr. Vejas Sai", "Dr. Priya Sharma", "Dr. Amit Patel", "Dr. Sneha Gupta",
+    "Dr. Vikram Singh", "Dr. Anjali Verma", "Dr. Rahul Reddy", "Dr. Kavita Iyer",
+    "Dr. Sanjay Mehta", "Dr. Neha Joshi"
 ];
 
 const STATUSES = ["Available", "Unavailable"];
