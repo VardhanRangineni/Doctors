@@ -1,13 +1,14 @@
 import React from 'react';
 import { FaSearch, FaWifi, FaUserCircle } from 'react-icons/fa';
 import { BsGrid3X3GapFill } from "react-icons/bs";
+import medPlusLogo from '../assets/MedPlus.png';
 
 const Header = () => {
     return (
         <header className="bg-white border-bottom py-2 px-4 d-flex justify-content-between align-items-center">
             <div className="d-flex align-items-center">
                 <div className=" rounded p-1 me-2 d-flex align-items-center justify-content-center">
-                    <span className=""><img src="public/Medplus.png" alt="Medplus Logo" style={{ width: '32px', height: '32px' }} /></span>
+                    <span className=""><img src={medPlusLogo} alt="Medplus Logo" style={{ width: '32px', height: '32px' }} /></span>
                 </div>
                 <div className="border-start border-2 mx-2" style={{ height: '32px', borderColor: '#e0e0e0' }}></div>
                 <div>
