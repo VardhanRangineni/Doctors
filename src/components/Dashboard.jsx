@@ -71,15 +71,19 @@ const Dashboard = () => {
 
     const downloadExcel = () => {
         const headers = [
-            "Doctor Name", "Current Status", "Total Assigned", "Auto Assigned",
+            "Doctor Name", "Shipment Type", "Current Status", "Total Assigned", "Auto Assigned",
             "Manual Assigned", "Reassigned", "Completed", "Pending",
             "Unclaimed", "Available Hrs", "Idle Time", "Avg Time / Order (in mins)"
         ];
 
-        const csvContent = [
-            headers.join(","),
-            ...doctors.map(doc => [
+        let csvRows = [];
+        csvRows.push(headers.join(","));
+
+        doctors.forEach(doc => {
+            // Main Doctor Row (Summary)
+            const mainRow = [
                 doc.name,
+                "All",
                 doc.status,
                 doc.metrics.totalAssigned,
                 doc.metrics.autoAssigned,
@@ -91,8 +95,33 @@ const Dashboard = () => {
                 doc.timeData.availableHours,
                 doc.timeData.idleTime,
                 doc.timeData.avgOrdersPerHour
-            ].join(","))
-        ].join("\n");
+            ];
+            csvRows.push(mainRow.join(","));
+
+            // Shipment Breakdown Rows
+            if (doc.shipmentMetrics) {
+                doc.shipmentMetrics.forEach(metric => {
+                    const row = [
+                        doc.name, // Repeating name for better filtering
+                        metric.type,
+                        "", // Current Status (Blank)
+                        metric.total,
+                        metric.auto,
+                        metric.manual,
+                        metric.reassigned,
+                        metric.completed,
+                        metric.pending,
+                        metric.unclaimed,
+                        "", // Available Hrs (Blank)
+                        "", // Idle Time (Blank)
+                        ""  // Avg Time / Order (Blank)
+                    ];
+                    csvRows.push(row.join(","));
+                });
+            }
+        });
+
+        const csvContent = csvRows.join("\n");
 
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
