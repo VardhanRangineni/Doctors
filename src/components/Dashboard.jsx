@@ -258,7 +258,7 @@ const Dashboard = () => {
                         </Carousel.Item>
                     </Carousel>
 
-                    <div className="bg-white rounded shadow-sm p-4">
+                    <div className="bg-white rounded shadow-sm p-3">
 
 
                         {/* KPI Tabs Removed */}
