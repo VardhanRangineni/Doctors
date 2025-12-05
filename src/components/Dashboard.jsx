@@ -228,7 +228,7 @@ const Dashboard = () => {
                                 <div className="col-md-4">
                                     <div className="card border-0 shadow-sm" style={{ minHeight: '10rem' }}>
                                         <div className="card-body text-center d-flex flex-column justify-content-center">
-                                            <h6 className="text-muted text-uppercase small fw-bold mb-2">Total Assigned</h6>
+                                            <h6 className="text-muted text-uppercase small fw-bold mb-2">Total</h6>
                                             <h2 className="display-6 fw-bold text-dark mb-0">{kpis.totalAssigned}</h2>
                                         </div>
                                     </div>
