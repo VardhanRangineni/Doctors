@@ -12,7 +12,7 @@ const Dashboard = () => {
 
     const today = new Date().toISOString().split('T')[0];
     const past90Days = new Date();
-    past90Days.setDate(past90Days.getDate() - 90);
+    past90Days.setDate(past90Days.getDate() - 92);
     const minDateStr = past90Days.toISOString().split('T')[0];
 
     const [startDate, setStartDate] = useState(today);
