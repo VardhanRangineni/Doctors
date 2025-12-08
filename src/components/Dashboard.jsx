@@ -11,8 +11,24 @@ const Dashboard = () => {
     const [expandedDoctorId, setExpandedDoctorId] = useState(null);
 
     const today = new Date().toISOString().split('T')[0];
+    const past90Days = new Date();
+    past90Days.setDate(past90Days.getDate() - 90);
+    const minDateStr = past90Days.toISOString().split('T')[0];
+
     const [startDate, setStartDate] = useState(today);
     const [endDate, setEndDate] = useState(today);
+
+    // Helper to add days to a date string
+    const addDays = (dateStr, days) => {
+        const date = new Date(dateStr);
+        date.setDate(date.getDate() + days);
+        return date.toISOString().split('T')[0];
+    };
+
+    // Calculate max allowed end date based on start date (Max 15 days range)
+    const maxEndDateForSelection = addDays(startDate, 15);
+    // The actual max for the end date picker is the lesser of (Start + 15) and Today
+    const finalMaxEndDate = maxEndDateForSelection > today ? today : maxEndDateForSelection;
 
     useEffect(() => {
         const data = getDashboardData(startDate, endDate);
@@ -72,9 +88,9 @@ const Dashboard = () => {
     const downloadExcel = () => {
         const headers = [
             "Doctor Name", "Shipment Type", "Current Status", "Total Assigned", "Auto Assigned",
-            "Doctor Name", "Shipment Type", "Current Status", "Total Assigned", "Auto Assigned",
             "Reassigned", "Completed (Total / Not Avlbl)", "Pending",
-            "Unclaimed", "Available Hrs / day", "Avg Time / Order (in mins)"
+            "Unclaimed", "Available Hrs / day",
+            "Avg Assign - Presc (mins)", "Avg Start - Presc (mins)"
         ];
 
         let csvRows = [];
@@ -93,7 +109,8 @@ const Dashboard = () => {
                 doc.metrics.pending,
                 doc.metrics.unclaimed,
                 doc.timeData.availableHours,
-                doc.timeData.avgOrdersPerHour
+                doc.avgTimes.assignToPresc,
+                doc.avgTimes.startToPresc
             ];
             csvRows.push(mainRow.join(","));
 
@@ -111,7 +128,8 @@ const Dashboard = () => {
                         metric.pending,
                         metric.unclaimed,
                         "", // Available Hrs / day (Blank)
-                        ""  // Avg Time / Order (Blank)
+                        "", // Assign - Presc (Blank)
+                        ""  // Start - Presc (Blank)
                     ];
                     csvRows.push(row.join(","));
                 });
@@ -149,10 +167,19 @@ const Dashboard = () => {
                                     style={{ width: '150px' }}
                                     value={startDate}
                                     max={today}
+                                    min={minDateStr}
                                     onChange={e => {
                                         const newStart = e.target.value;
                                         setStartDate(newStart);
-                                        if (newStart > endDate) {
+
+                                        // Calculate max end date for this new start date (Start + 15 days)
+                                        const maxEnd = addDays(newStart, 15);
+
+                                        if (endDate > maxEnd) {
+                                            // If current end date exceeds range, cap it
+                                            setEndDate(maxEnd > today ? today : maxEnd);
+                                        } else if (newStart > endDate) {
+                                            // If new start is after end, move end to start
                                             setEndDate(newStart);
                                         }
                                     }}
@@ -165,11 +192,11 @@ const Dashboard = () => {
                                     className="form-control form-control-sm"
                                     style={{ width: '150px' }}
                                     value={endDate}
-                                    max={today}
+                                    max={finalMaxEndDate}
                                     min={startDate}
                                     onChange={e => {
                                         const newEnd = e.target.value;
-                                        if (newEnd >= startDate) {
+                                        if (newEnd >= startDate && newEnd <= finalMaxEndDate) {
                                             setEndDate(newEnd);
                                         }
                                     }}
@@ -262,7 +289,7 @@ const Dashboard = () => {
                                 <div className="col-md-4">
                                     <div className="card border-0 shadow-sm" style={{ minHeight: '12rem' }}>
                                         <div className="card-body text-center d-flex flex-column justify-content-center">
-                                            <h6 className="text-muted text-uppercase small fw-bold mb-2">Unclaimed (% of total)</h6>
+                                            <h6 className="text-muted text-uppercase small fw-bold mb-2">Unclaimed (% of Assigned)</h6>
                                             <h2 className="display-6 fw-bold text-danger mb-0">{unclaimedRate}%</h2>
                                             <div className="small text-muted mt-2">{kpis.unclaimed} orders unclaimed</div>
                                         </div>
@@ -282,6 +309,7 @@ const Dashboard = () => {
                             </div>
                         </Carousel.Item>
                     </Carousel>
+
 
                     <div className="bg-white rounded shadow-sm p-3">
 
@@ -304,22 +332,26 @@ const Dashboard = () => {
                             <table className="table table-hover align-middle text-nowrap">
                                 <thead className="table-light">
                                     <tr style={{ verticalAlign: 'middle' }}>
-                                        <th className="text-wrap" style={{ minWidth: '150px' }}>Doctor Name</th>
-                                        <th className="text-wrap">Current Status</th>
-                                        <th className="text-center text-wrap">Total Assigned</th>
-                                        <th className="text-center text-wrap">Auto Assigned</th>
-                                        <th className="text-center text-wrap">Reassigned</th>
-                                        <th className="text-center text-wrap" style={{ minWidth: '120px' }}>
+                                        <th rowSpan="2" className="text-wrap" style={{ minWidth: '150px' }}>Doctor Name</th>
+                                        <th rowSpan="2" className="text-wrap">Current Status</th>
+                                        <th rowSpan="2" className="text-center text-wrap">Total Assigned</th>
+                                        <th rowSpan="2" className="text-center text-wrap">Auto Assigned</th>
+                                        <th rowSpan="2" className="text-center text-wrap">Reassigned</th>
+                                        <th rowSpan="2" className="text-center text-wrap" style={{ minWidth: '120px' }}>
                                             Completed<br />
                                             <span className="small text-muted fw-normal">(Total / Not Avlbl)</span>
                                         </th>
-                                        <th className="text-center text-wrap">Pending</th>
-                                        <th className="text-center text-wrap">Unclaimed</th>
-                                        <th className="text-center text-wrap">Available Hrs / day</th>
-                                        <th className="text-center text-wrap">
+                                        <th rowSpan="2" className="text-center text-wrap">Pending</th>
+                                        <th rowSpan="2" className="text-center text-wrap">Unclaimed</th>
+                                        <th rowSpan="2" className="text-center text-wrap">Available Hrs / day</th>
+                                        <th colSpan="2" className="text-center text-wrap border-bottom-0">
                                             Avg Time / Order<br />
                                             <span className="small text-muted fw-normal">(in mins)</span>
                                         </th>
+                                    </tr>
+                                    <tr style={{ verticalAlign: 'middle' }}>
+                                        <th className="text-center small text-muted">Assign - Presc</th>
+                                        <th className="text-center small text-muted">Start - Presc</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -349,11 +381,12 @@ const Dashboard = () => {
                                                 <td className="text-center text-warning fw-bold">{doctor.metrics.pending}</td>
                                                 <td className="text-center text-danger fw-bold">{doctor.metrics.unclaimed}</td>
                                                 <td className="text-center">{doctor.timeData.availableHours}</td>
-                                                <td className="text-center">{doctor.timeData.avgOrdersPerHour}</td>
+                                                <td className="text-center">{doctor.avgTimes.assignToPresc}</td>
+                                                <td className="text-center">{doctor.avgTimes.startToPresc}</td>
                                             </tr>
                                             {expandedDoctorId === doctor.id && (
                                                 <tr>
-                                                    <td colSpan="10" className="p-0 bg-light">
+                                                    <td colSpan="12" className="p-0 bg-light">
                                                         <div className="p-3">
                                                             <h6 className="text-muted mb-3 ps-2 border-start border-4 border-primary">Shipment Breakdown for {doctor.name}</h6>
                                                             <table className="table table-sm table-bordered bg-white mb-0">
