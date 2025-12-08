@@ -88,9 +88,10 @@ const Dashboard = () => {
     const downloadExcel = () => {
         const headers = [
             "Doctor Name", "Shipment Type", "Current Status", "Total Assigned", "Auto Assigned",
-            "Reassigned", "Completed (Total / Not Avlbl)", "Pending",
-            "Unclaimed", "Available Hrs / day",
-            "Avg Assign - Presc (mins)", "Avg Start - Presc (mins)"
+            "Reassigned", "Total Completed", "Completed (Not Avlbl)", "Pending",
+            "Unclaimed (% of Assigned)", "Available Hrs / day",
+            "Unclaimed (% of Assigned)", "Available Hrs / day",
+            "Avg Assign-Presc (in mins)", "Avg Start-Presc (in mins)"
         ];
 
         let csvRows = [];
@@ -98,6 +99,10 @@ const Dashboard = () => {
 
         doctors.forEach(doc => {
             // Main Doctor Row (Summary)
+            const unclaimedPct = doc.metrics.totalAssigned > 0
+                ? ((doc.metrics.unclaimed / doc.metrics.totalAssigned) * 100).toFixed(1) + "%"
+                : "0.0%";
+
             const mainRow = [
                 doc.name,
                 "All",
@@ -105,9 +110,10 @@ const Dashboard = () => {
                 doc.metrics.totalAssigned,
                 doc.metrics.autoAssigned,
                 doc.metrics.reassigned,
-                `${doc.metrics.completed} (${doc.metrics.completedUnavailable})`,
+                doc.metrics.completed,
+                doc.metrics.completedUnavailable,
                 doc.metrics.pending,
-                doc.metrics.unclaimed,
+                unclaimedPct,
                 doc.timeData.availableHours,
                 doc.avgTimes.assignToPresc,
                 doc.avgTimes.startToPresc
@@ -117,6 +123,10 @@ const Dashboard = () => {
             // Shipment Breakdown Rows
             if (doc.shipmentMetrics) {
                 doc.shipmentMetrics.forEach(metric => {
+                    const metricUnclaimedPct = metric.total > 0
+                        ? ((metric.unclaimed / metric.total) * 100).toFixed(1) + "%"
+                        : "0.0%";
+
                     const row = [
                         doc.name, // Repeating name for better filtering
                         metric.type,
@@ -124,12 +134,13 @@ const Dashboard = () => {
                         metric.total,
                         metric.auto,
                         metric.reassigned,
-                        metric.completed, // Sub-metrics might not have unavailable breakdown, keeping simple or could mock too
+                        metric.completed,
+                        "", // Completed (not available) - Blank for shipment breakdown
                         metric.pending,
-                        metric.unclaimed,
+                        metricUnclaimedPct,
                         "", // Available Hrs / day (Blank)
-                        "", // Assign - Presc (Blank)
-                        ""  // Start - Presc (Blank)
+                        "", // Avg Assign-Presc (in mins) (Blank)
+                        ""  // Avg Start-Presc (in mins) (Blank)
                     ];
                     csvRows.push(row.join(","));
                 });
@@ -154,7 +165,7 @@ const Dashboard = () => {
             <Header />
             <div className="d-flex flex-grow-1">
                 <Sidebar />
-                <div className="flex-grow-1 p-4 bg-light">
+                <div className="flex-grow-1 p-4 bg-light" style={{ minWidth: 0 }}>
                     {/* Title and Filters */}
                     <div className="d-flex justify-content-between align-items-center mb-3">
                         <h5 className="mb-0">Doctor E-Prescriptions</h5>
@@ -332,26 +343,18 @@ const Dashboard = () => {
                             <table className="table table-hover align-middle text-nowrap">
                                 <thead className="table-light">
                                     <tr style={{ verticalAlign: 'middle' }}>
-                                        <th rowSpan="2" className="text-wrap" style={{ minWidth: '150px' }}>Doctor Name</th>
-                                        <th rowSpan="2" className="text-wrap">Current Status</th>
-                                        <th rowSpan="2" className="text-center text-wrap">Total Assigned</th>
-                                        <th rowSpan="2" className="text-center text-wrap">Auto Assigned</th>
-                                        <th rowSpan="2" className="text-center text-wrap">Reassigned</th>
-                                        <th rowSpan="2" className="text-center text-wrap" style={{ minWidth: '120px' }}>
-                                            Completed<br />
-                                            <span className="small text-muted fw-normal">(Total / Not Avlbl)</span>
-                                        </th>
-                                        <th rowSpan="2" className="text-center text-wrap">Pending</th>
-                                        <th rowSpan="2" className="text-center text-wrap">Unclaimed</th>
-                                        <th rowSpan="2" className="text-center text-wrap">Available Hrs / day</th>
-                                        <th colSpan="2" className="text-center text-wrap border-bottom-0">
-                                            Avg Time / Order<br />
-                                            <span className="small text-muted fw-normal">(in mins)</span>
-                                        </th>
-                                    </tr>
-                                    <tr style={{ verticalAlign: 'middle' }}>
-                                        <th className="text-center small text-muted">Assign - Presc</th>
-                                        <th className="text-center small text-muted">Start - Presc</th>
+                                        <th style={{ minWidth: '150px' }}>Doctor</th>
+                                        <th>Status</th>
+                                        <th className="text-center">Total Assigned</th>
+                                        <th className="text-center">Auto Assigned</th>
+                                        <th className="text-center">Reassigned</th>
+                                        <th className="text-center">Total Completed</th>
+                                        <th className="text-center">Completed (not Avlbl)</th>
+                                        <th className="text-center">Pending</th>
+                                        <th className="text-center">Unclaimed</th>
+                                        <th className="text-center">Available Hrs / day</th>
+                                        <th className="text-center">Avg Assign-Presc (in mins)</th>
+                                        <th className="text-center">Avg Start-Presc (in mins)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -374,10 +377,8 @@ const Dashboard = () => {
                                                 <td className="text-center">{doctor.metrics.totalAssigned}</td>
                                                 <td className="text-center">{doctor.metrics.autoAssigned}</td>
                                                 <td className="text-center">{doctor.metrics.reassigned}</td>
-                                                <td className="text-center text-success fw-bold">
-                                                    {doctor.metrics.completed}
-                                                    <span className="text-muted fw-normal ms-1 small">({doctor.metrics.completedUnavailable})</span>
-                                                </td>
+                                                <td className="text-center text-success fw-bold">{doctor.metrics.completed}</td>
+                                                <td className="text-center text-muted fw-bold">{doctor.metrics.completedUnavailable}</td>
                                                 <td className="text-center text-warning fw-bold">{doctor.metrics.pending}</td>
                                                 <td className="text-center text-danger fw-bold">{doctor.metrics.unclaimed}</td>
                                                 <td className="text-center">{doctor.timeData.availableHours}</td>
@@ -386,7 +387,7 @@ const Dashboard = () => {
                                             </tr>
                                             {expandedDoctorId === doctor.id && (
                                                 <tr>
-                                                    <td colSpan="12" className="p-0 bg-light">
+                                                    <td colSpan="13" className="p-0 bg-light">
                                                         <div className="p-3">
                                                             <h6 className="text-muted mb-3 ps-2 border-start border-4 border-primary">Shipment Breakdown for {doctor.name}</h6>
                                                             <table className="table table-sm table-bordered bg-white mb-0">
