@@ -7,7 +7,7 @@ import './Sidebar.css';
 
 const Sidebar = () => {
     return (
-        <div className="sidebar d-flex flex-column bg-white border-end" style={{ width: '250px', minHeight: '100vh' }}>
+        <div className="sidebar d-flex flex-column bg-white border-end" style={{ width: '250px', minHeight: '100vh', flexShrink: 0 }}>
             <div className="p-3">
                 <div className="input-group mb-3">
                     <span className="input-group-text bg-light border-end-0"><FaSearch className="text-muted" /></span>

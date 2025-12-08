@@ -130,6 +130,7 @@ export const getDashboardData = (startDateStr, endDateStr) => {
             manualAssigned: doctorOrders.filter(o => o.assignType === "Manual").length,
             reassigned: doctorOrders.filter(o => o.assignType === "Reassigned").length,
             completed: doctorOrders.filter(o => o.status === "Completed").length,
+            completedUnavailable: Math.floor(doctorOrders.filter(o => o.status === "Completed").length * 0.1), // Mock 10% as unavailable
             pending: doctorOrders.filter(o => o.status === "Pending").length,
             unclaimed: doctorOrders.filter(o => o.status === "Unclaimed").length,
         };

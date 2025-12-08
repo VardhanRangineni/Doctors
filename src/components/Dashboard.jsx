@@ -72,8 +72,9 @@ const Dashboard = () => {
     const downloadExcel = () => {
         const headers = [
             "Doctor Name", "Shipment Type", "Current Status", "Total Assigned", "Auto Assigned",
-            "Manual Assigned", "Reassigned", "Completed", "Pending",
-            "Unclaimed", "Available Hrs", "Idle Time", "Avg Time / Order (in mins)"
+            "Doctor Name", "Shipment Type", "Current Status", "Total Assigned", "Auto Assigned",
+            "Reassigned", "Completed (Total / Not Avlbl)", "Pending",
+            "Unclaimed", "Available Hrs / day", "Avg Time / Order (in mins)"
         ];
 
         let csvRows = [];
@@ -87,13 +88,11 @@ const Dashboard = () => {
                 doc.status,
                 doc.metrics.totalAssigned,
                 doc.metrics.autoAssigned,
-                doc.metrics.manualAssigned,
                 doc.metrics.reassigned,
-                doc.metrics.completed,
+                `${doc.metrics.completed} (${doc.metrics.completedUnavailable})`,
                 doc.metrics.pending,
                 doc.metrics.unclaimed,
                 doc.timeData.availableHours,
-                doc.timeData.idleTime,
                 doc.timeData.avgOrdersPerHour
             ];
             csvRows.push(mainRow.join(","));
@@ -107,13 +106,11 @@ const Dashboard = () => {
                         "", // Current Status (Blank)
                         metric.total,
                         metric.auto,
-                        metric.manual,
                         metric.reassigned,
-                        metric.completed,
+                        metric.completed, // Sub-metrics might not have unavailable breakdown, keeping simple or could mock too
                         metric.pending,
                         metric.unclaimed,
-                        "", // Available Hrs (Blank)
-                        "", // Idle Time (Blank)
+                        "", // Available Hrs / day (Blank)
                         ""  // Avg Time / Order (Blank)
                     ];
                     csvRows.push(row.join(","));
@@ -186,9 +183,9 @@ const Dashboard = () => {
                         <Carousel.Item>
                             <div className="row g-3 p-1">
                                 <div className="col-md-4">
-                                    <div className="card border-0 shadow-sm" style={{ minHeight: '10rem' }}>
+                                    <div className="card border-0 shadow-sm" style={{ minHeight: '12rem' }}>
                                         <div className="card-body text-center d-flex flex-column justify-content-center">
-                                            <h6 className="text-muted text-uppercase small fw-bold mb-2">Total Doctors</h6>
+                                            <h6 className="text-muted text-uppercase small fw-bold mb-2">Total Doctors (Today)</h6>
                                             <h2 className="display-6 fw-bold text-primary mb-2">{doctors.length}</h2>
                                             <div className="d-flex justify-content-center gap-3 small">
                                                 <div className="d-flex align-items-center text-success">
@@ -204,81 +201,80 @@ const Dashboard = () => {
                                     </div>
                                 </div>
                                 <div className="col-md-4">
-                                    <div className="card border-0 shadow-sm" style={{ minHeight: '10rem' }}>
+                                    <div className="card border-0 shadow-sm" style={{ minHeight: '12rem' }}>
                                         <div className="card-body text-center d-flex flex-column justify-content-center">
-                                            <h6 className="text-muted text-uppercase small fw-bold mb-2">Avg Order / Doctor</h6>
-                                            <h2 className="display-6 fw-bold text-info mb-0">{avgOrdersPerActive}</h2>
-                                            <div className="small text-muted mt-2">Based on {activeDoctorsCount} active doctors</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-md-4">
-                                    <div className="card border-0 shadow-sm" style={{ minHeight: '10rem' }}>
-                                        <div className="card-body text-center d-flex flex-column justify-content-center">
-                                            <h6 className="text-muted text-uppercase small fw-bold mb-2">Unclaimed %</h6>
-                                            <h2 className="display-6 fw-bold text-danger mb-0">{unclaimedRate}%</h2>
-                                            <div className="small text-muted mt-2">{kpis.unclaimed} orders unclaimed</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </Carousel.Item>
-                        <Carousel.Item>
-                            <div className="row g-3 p-1">
-                                <div className="col-md-4">
-                                    <div className="card border-0 shadow-sm" style={{ minHeight: '10rem' }}>
-                                        <div className="card-body text-center d-flex flex-column justify-content-center">
-                                            <h6 className="text-muted text-uppercase small fw-bold mb-2">Total</h6>
-                                            <h2 className="display-6 fw-bold text-dark mb-0">{kpis.totalAssigned}</h2>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-md-4">
-                                    <div className="card border-0 shadow-sm" style={{ minHeight: '10rem' }}>
-                                        <div className="card-body text-center d-flex flex-column justify-content-center">
-                                            <h6 className="text-muted text-uppercase small fw-bold mb-2">Completed</h6>
-                                            <h2 className="display-6 fw-bold text-success mb-0">{kpis.completed}</h2>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-md-4">
-                                    <div className="card border-0 shadow-sm" style={{ minHeight: '10rem' }}>
-                                        <div className="card-body text-center d-flex flex-column justify-content-center">
-                                            <h6 className="text-muted text-uppercase small fw-bold mb-2">Pending</h6>
-                                            <h2 className="display-6 fw-bold text-warning mb-0">{kpis.pending}</h2>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </Carousel.Item>
-                        <Carousel.Item>
-                            <div className="row g-3 p-1">
-                                <div className="col-md-4">
-                                    <div className="card border-0 shadow-sm" style={{ minHeight: '10rem' }}>
-                                        <div className="card-body text-center d-flex flex-column justify-content-center">
-                                            <h6 className="text-muted text-uppercase small fw-bold mb-2">Average Time / Order</h6>
-                                            <div className="d-flex flex-column gap-2 small">
-                                                <div className="d-flex justify-content-between border-bottom pb-1">
-                                                    <span>Request - Prescription:</span>
-                                                    <span className="fw-bold text-primary">{globalAvgTimes.reqToPresc} min</span>
+                                            <h6 className="text-muted text-uppercase small fw-bold mb-3">Order Summary</h6>
+                                            <div className="d-flex justify-content-around w-100">
+                                                <div className="d-flex flex-column align-items-center">
+                                                    <span className="h4 fw-bold text-dark mb-0">{kpis.totalAssigned}</span>
+                                                    <span className="small text-muted">Total</span>
                                                 </div>
-                                                <div className="d-flex justify-content-between border-bottom pb-1">
-                                                    <span>Assignment - Prescription:</span>
-                                                    <span className="fw-bold text-info">{globalAvgTimes.assignToPresc} min</span>
+                                                <div className="vr"></div>
+                                                <div className="d-flex flex-column align-items-center">
+                                                    <span className="h4 fw-bold text-success mb-0">{kpis.completed}</span>
+                                                    <span className="small text-muted">Completed</span>
                                                 </div>
-                                                <div className="d-flex justify-content-between">
-                                                    <span>Start - Prescription:</span>
-                                                    <span className="fw-bold text-success">{globalAvgTimes.startToPresc} min</span>
+                                                <div className="vr"></div>
+                                                <div className="d-flex flex-column align-items-center">
+                                                    <span className="h4 fw-bold text-warning mb-0">{kpis.pending}</span>
+                                                    <span className="small text-muted">Pending</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="col-md-4">
-                                    <div className="card border-0 shadow-sm" style={{ minHeight: '10rem' }}>
+                                    <div className="card border-0 shadow-sm" style={{ minHeight: '12rem' }}>
+                                        <div className="card-body text-center d-flex flex-column justify-content-center">
+                                            <h6 className="text-muted text-uppercase small fw-bold mb-3">Avg Time / Order</h6>
+                                            <div className="d-flex justify-content-around w-100">
+                                                <div className="d-flex flex-column align-items-center">
+                                                    <span className="h4 fw-bold text-primary mb-0">{globalAvgTimes.reqToPresc} <span className="fs-6 text-muted">min</span></span>
+                                                    <span className="small text-muted text-center" style={{ fontSize: '0.7rem' }}>Req to Presc</span>
+                                                </div>
+                                                <div className="vr"></div>
+                                                <div className="d-flex flex-column align-items-center">
+                                                    <span className="h4 fw-bold text-info mb-0">{globalAvgTimes.assignToPresc} <span className="fs-6 text-muted">min</span></span>
+                                                    <span className="small text-muted text-center" style={{ fontSize: '0.7rem' }}>Assign to Presc</span>
+                                                </div>
+                                                <div className="vr"></div>
+                                                <div className="d-flex flex-column align-items-center">
+                                                    <span className="h4 fw-bold text-success mb-0">{globalAvgTimes.startToPresc} <span className="fs-6 text-muted">min</span></span>
+                                                    <span className="small text-muted text-center" style={{ fontSize: '0.7rem' }}>Start to Presc</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </Carousel.Item>
+                        <Carousel.Item>
+                            <div className="row g-3 p-1">
+                                <div className="col-md-4">
+                                    <div className="card border-0 shadow-sm" style={{ minHeight: '12rem' }}>
+                                        <div className="card-body text-center d-flex flex-column justify-content-center">
+                                            <h6 className="text-muted text-uppercase small fw-bold mb-2">Avg Orders / Doctor (Daily)</h6>
+                                            <h2 className="display-6 fw-bold text-info mb-0">{avgOrdersPerActive}</h2>
+                                            <div className="small text-muted mt-2">Based on {activeDoctorsCount} active doctors</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-md-4">
+                                    <div className="card border-0 shadow-sm" style={{ minHeight: '12rem' }}>
+                                        <div className="card-body text-center d-flex flex-column justify-content-center">
+                                            <h6 className="text-muted text-uppercase small fw-bold mb-2">Unclaimed (% of total)</h6>
+                                            <h2 className="display-6 fw-bold text-danger mb-0">{unclaimedRate}%</h2>
+                                            <div className="small text-muted mt-2">{kpis.unclaimed} orders unclaimed</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-md-4">
+                                    <div className="card border-0 shadow-sm" style={{ minHeight: '12rem' }}>
                                         <div className="card-body text-center d-flex flex-column justify-content-center">
                                             <h6 className="text-muted text-uppercase small fw-bold mb-2">Non Responded Avg Time</h6>
-                                            <h2 className="display-6 fw-bold text-danger mb-0">{globalAvgTimes.nonResponded} min</h2>
+                                            <h2 className="display-6 fw-bold text-danger mb-0">
+                                                {globalAvgTimes.nonResponded} min <span className="fs-6 text-muted small">({kpis.rejected} Orders)</span>
+                                            </h2>
                                             <div className="small text-muted mt-2">Avg time for Request - Prescription</div>
                                         </div>
                                     </div>
@@ -307,19 +303,17 @@ const Dashboard = () => {
                         <div className="table-responsive">
                             <table className="table table-hover align-middle text-nowrap">
                                 <thead className="table-light">
-                                    <tr>
-                                        <th>Doctor Name</th>
-                                        <th>Current Status</th>
-                                        <th className="text-center">Total Assigned</th>
-                                        <th className="text-center">Auto Assigned</th>
-                                        <th className="text-center">Manual Assigned</th>
-                                        <th className="text-center">Reassigned</th>
-                                        <th className="text-center">Completed</th>
-                                        <th className="text-center">Pending</th>
-                                        <th className="text-center">Unclaimed</th>
-                                        <th className="text-center">Available Hrs</th>
-                                        <th className="text-center">Idle Time</th>
-                                        <th className="text-center">Avg Time / Order (in mins)</th>
+                                    <tr style={{ verticalAlign: 'middle' }}>
+                                        <th className="text-wrap" style={{ minWidth: '150px' }}>Doctor Name</th>
+                                        <th className="text-wrap">Current Status</th>
+                                        <th className="text-center text-wrap">Total Assigned</th>
+                                        <th className="text-center text-wrap">Auto Assigned</th>
+                                        <th className="text-center text-wrap">Reassigned</th>
+                                        <th className="text-center text-wrap" style={{ minWidth: '120px' }}>Completed (Total / Not Avlbl)</th>
+                                        <th className="text-center text-wrap">Pending</th>
+                                        <th className="text-center text-wrap">Unclaimed</th>
+                                        <th className="text-center text-wrap">Available Hrs / day</th>
+                                        <th className="text-center text-wrap">Avg Time / Order (in mins)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -341,18 +335,19 @@ const Dashboard = () => {
                                                 </td>
                                                 <td className="text-center">{doctor.metrics.totalAssigned}</td>
                                                 <td className="text-center">{doctor.metrics.autoAssigned}</td>
-                                                <td className="text-center">{doctor.metrics.manualAssigned}</td>
                                                 <td className="text-center">{doctor.metrics.reassigned}</td>
-                                                <td className="text-center text-success fw-bold">{doctor.metrics.completed}</td>
+                                                <td className="text-center text-success fw-bold">
+                                                    {doctor.metrics.completed}
+                                                    <span className="text-muted fw-normal ms-1 small">({doctor.metrics.completedUnavailable})</span>
+                                                </td>
                                                 <td className="text-center text-warning fw-bold">{doctor.metrics.pending}</td>
                                                 <td className="text-center text-danger fw-bold">{doctor.metrics.unclaimed}</td>
                                                 <td className="text-center">{doctor.timeData.availableHours}</td>
-                                                <td className="text-center text-muted fw-bold">{doctor.timeData.idleTime}</td>
                                                 <td className="text-center">{doctor.timeData.avgOrdersPerHour}</td>
                                             </tr>
                                             {expandedDoctorId === doctor.id && (
                                                 <tr>
-                                                    <td colSpan="12" className="p-0 bg-light">
+                                                    <td colSpan="10" className="p-0 bg-light">
                                                         <div className="p-3">
                                                             <h6 className="text-muted mb-3 ps-2 border-start border-4 border-primary">Shipment Breakdown for {doctor.name}</h6>
                                                             <table className="table table-sm table-bordered bg-white mb-0">
@@ -361,7 +356,6 @@ const Dashboard = () => {
                                                                         <th>Shipment Type</th>
                                                                         <th>Total Assigned</th>
                                                                         <th>Auto Assigned</th>
-                                                                        <th>Manual Assigned</th>
                                                                         <th>Reassigned</th>
                                                                         <th>Completed</th>
                                                                         <th>Pending</th>
@@ -383,7 +377,6 @@ const Dashboard = () => {
                                                                             </td>
                                                                             <td>{metric.total}</td>
                                                                             <td>{metric.auto}</td>
-                                                                            <td>{metric.manual}</td>
                                                                             <td>{metric.reassigned}</td>
                                                                             <td className="text-success">{metric.completed}</td>
                                                                             <td className="text-warning">{metric.pending}</td>
@@ -392,7 +385,7 @@ const Dashboard = () => {
                                                                     ))}
                                                                     {doctor.shipmentMetrics.length === 0 && (
                                                                         <tr>
-                                                                            <td colSpan="8" className="text-center text-muted">No shipment data available for this period.</td>
+                                                                            <td colSpan="7" className="text-center text-muted">No shipment data available for this period.</td>
                                                                         </tr>
                                                                     )}
                                                                 </tbody>
