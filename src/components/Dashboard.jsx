@@ -226,20 +226,20 @@ const Dashboard = () => {
                                 <div className="col-md-4">
                                     <div className="card border-0 shadow-sm" style={{ minHeight: '12rem' }}>
                                         <div className="card-body text-center d-flex flex-column justify-content-center">
-                                            <h6 className="text-muted text-uppercase small fw-bold mb-3">Avg Time / Order</h6>
+                                            <h6 className="text-muted text-uppercase small fw-bold mb-3">Avg Time / Order (mins)</h6>
                                             <div className="d-flex justify-content-around w-100">
                                                 <div className="d-flex flex-column align-items-center">
-                                                    <span className="h4 fw-bold text-primary mb-0">{globalAvgTimes.reqToPresc} <span className="fs-6 text-muted">min</span></span>
+                                                    <span className="h4 fw-bold text-primary mb-0">{globalAvgTimes.reqToPresc} <span className="fs-6 text-muted"></span></span>
                                                     <span className="small text-muted text-center" style={{ fontSize: '0.7rem' }}>Req to Presc</span>
                                                 </div>
                                                 <div className="vr"></div>
                                                 <div className="d-flex flex-column align-items-center">
-                                                    <span className="h4 fw-bold text-info mb-0">{globalAvgTimes.assignToPresc} <span className="fs-6 text-muted">min</span></span>
+                                                    <span className="h4 fw-bold text-info mb-0">{globalAvgTimes.assignToPresc} <span className="fs-6 text-muted"></span></span>
                                                     <span className="small text-muted text-center" style={{ fontSize: '0.7rem' }}>Assign to Presc</span>
                                                 </div>
                                                 <div className="vr"></div>
                                                 <div className="d-flex flex-column align-items-center">
-                                                    <span className="h4 fw-bold text-success mb-0">{globalAvgTimes.startToPresc} <span className="fs-6 text-muted">min</span></span>
+                                                    <span className="h4 fw-bold text-success mb-0">{globalAvgTimes.startToPresc} <span className="fs-6 text-muted"></span></span>
                                                     <span className="small text-muted text-center" style={{ fontSize: '0.7rem' }}>Start to Presc</span>
                                                 </div>
                                             </div>
@@ -309,11 +309,17 @@ const Dashboard = () => {
                                         <th className="text-center text-wrap">Total Assigned</th>
                                         <th className="text-center text-wrap">Auto Assigned</th>
                                         <th className="text-center text-wrap">Reassigned</th>
-                                        <th className="text-center text-wrap" style={{ minWidth: '120px' }}>Completed (Total / Not Avlbl)</th>
+                                        <th className="text-center text-wrap" style={{ minWidth: '120px' }}>
+                                            Completed<br />
+                                            <span className="small text-muted fw-normal">(Total / Not Avlbl)</span>
+                                        </th>
                                         <th className="text-center text-wrap">Pending</th>
                                         <th className="text-center text-wrap">Unclaimed</th>
                                         <th className="text-center text-wrap">Available Hrs / day</th>
-                                        <th className="text-center text-wrap">Avg Time / Order (in mins)</th>
+                                        <th className="text-center text-wrap">
+                                            Avg Time / Order<br />
+                                            <span className="small text-muted fw-normal">(in mins)</span>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
